@@ -3,12 +3,12 @@
 #include "liste.h"
 #endif
 
-int Image_To_Graph(graph* ,Image *im);
-int Graph_To_Image(graph *,Image *im);
-int Graph_To_Image2(graph *,Image *im);
-int Graph_To_Image3(graph *,Image *im);
-float same_color(GLubyte *data,GLubyte *data1);
-void print_Gr(graph *GR);
-int  recherche_connex(graph *gr, noued data, Listgr*visite,Listgr *courant);
-int  compos_connex(graph *gr,List *res );
+int Image_To_Graph(graph* ,Image *);
+int Graph_To_Image(graph *,Image *);
+int Graph_To_Image2(graph *,Image *);
+int Graph_To_Image3(graph *,Image *);
+float same_color(GLubyte *,GLubyte *);
+void print_Gr(graph *);
+int  recherche_connex(graph *, noued , Listgr*,Listgr *);
+List*  compos_connex(graph * );
 void free_GR(graph*);

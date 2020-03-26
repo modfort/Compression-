@@ -207,22 +207,25 @@ int Graph_To_Image3(graph* gr,Image *im)
 //les passes en parametres
 // elle contiendra la liste des graph convexes
 // on sauvegardmae a chaque
-int  compos_connex(graph *gr,List *res )
-{
-    Listgr *visite;
-    Listgr *courant;
-    init_Lgr(visite, gr->liste);
-    init_Lgr(courant, gr->liste);
-
+List*  compos_connex(graph *gr)
+{   List *res;//resultat
+    Listgr *visite; // tout ceux visite
+    Listgr *courant;//le graph courant
+    visite =init_Lgr( gr->liste);
+    courant =init_Lgr( gr->liste);
+    assert(visite);
+    assert(courant);
+    assert(res);
     add_Lgr(visite, gr->liste);
     add_Lgr(courant, gr->liste);
     for (int j = 0; j<gr->liste[0].n ; j++)
         recherche_connex(gr, gr->liste[gr->liste[0].adj[j]], visite, courant);
-    init_L(res,courant);
-
+   res= init_L(courant);
+    assert(res);
     //  init_Lgr(courant,gr)
     for(ulong i  = 1 ;i < gr->n ; i++ )
     {	courant =realloc(courant ,sizeof(Listgr));
+        assert(courant);
         courant->data = gr->liste+i;
         courant->next = NULL;
         add_Lgr(visite, gr->liste+i);
@@ -233,7 +236,7 @@ int  compos_connex(graph *gr,List *res )
     }
     free_Lgr(courant);
     free_Lgr(visite);
-    return 1;
+    return res;
 }
 //cette fonction
 int  recherche_connex(graph *gr, noued data, Listgr*visite,Listgr *courant)

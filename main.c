@@ -4,7 +4,7 @@
 
 Image *image;//ceci est notre image de base
 graph *GR;// ceci est notre graphe avec son million de noued
-List * res;// ceci est notres liste de graph convexe
+List * res;// ceci est notres liste de graph convexe.
 #define ESCAPE 27
 
 void Keyboard(unsigned char key, int x, int y)  {
@@ -33,7 +33,9 @@ void Mouse(int button, int state, int x, int y) {
 int Init(char *s) {
 
   image = malloc(sizeof(Image));
+  assert(image);
   GR = malloc(sizeof(graph)  );
+  assert(GR);
   if (image == NULL) {
     fprintf(stderr, "Out of memory\n");
     return(-1);
@@ -125,10 +127,10 @@ void menuFunc(int item) {
      
      // Graph_To_Image( GR, image);
    Image_To_Graph(GR, image );
-     print_Gr(GR);
-     Graph_To_Image(GR,image);
-          printf("reussi\n");
-          compos_connex(GR,res);
+   print_Gr(GR);
+   Graph_To_Image(GR,image);
+   printf("reussi\n");
+   res= compos_connex(GR);
 
     break;
 

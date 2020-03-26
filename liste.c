@@ -2,11 +2,13 @@
 #include "liste.h"
 #endif
 // pour les liste de noued
-void init_Lgr(Listgr*tete, noued* data)
+Listgr* init_Lgr( noued* data)
 {
-    tete = malloc(sizeof(Listgr));
+    Listgr* tete  = malloc(sizeof(Listgr));
+    assert(tete);
     tete->data = data;
     tete->next = NULL;
+    return tete;
 }
 
 int find_Lgr(Listgr*tete,noued *data)
@@ -37,6 +39,7 @@ void add_Lgr(Listgr *tete,noued *data)
     }
     Listgr * suiv;
     suiv = malloc(sizeof(Listgr));
+    assert(suiv);
     suiv->data = data;
     tmp->next = suiv;
 }
@@ -52,11 +55,13 @@ void free_Lgr(Listgr *tete)
 // pour les liste de liste de graph
 
 
-void init_L(List*tete,Listgr *data)
+List* init_L(Listgr *data)
 {
-    tete = malloc(sizeof(List));
+    List*tete = malloc(sizeof(List));
+    assert(tete);
     tete->next = NULL;
     tete->data = data;
+    return tete;
 }
 
 void add_L(List *tete,Listgr *data)
@@ -65,6 +70,7 @@ void add_L(List *tete,Listgr *data)
         fprintf(stderr,"%s\n","erreur d'allocation");
         return;
     }
+
     List* tmp = tete;
     while(tmp->next)
     {
@@ -75,6 +81,7 @@ void add_L(List *tete,Listgr *data)
     suiv->data = data;
     tmp->next = suiv;
 }
+
 void free_L(List *tete)
 {
     if(!tete)
