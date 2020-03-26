@@ -1,13 +1,20 @@
 #include "graph.h"
-#define LIM 12.
+#define LIM 8.
 float same_color(GLubyte *data,GLubyte *data1)
 {		
 	return sqrt(pow(data[0] - data1[0],2)+pow(data[1] - data1[1],2) + pow(data[2] - data1[2],2));
 }
 
-int  Image_To_Graph( graph*GR, Image *im)
-{	
+graph*  Image_To_Graph(  Image *im)
+{	graph * GR = malloc(sizeof(graph));
+    GR->liste = malloc(sizeof(noued)*im->sizeX *im->sizeY);
+    assert(GR);
+    assert(GR->liste);
+    GR->sizeX = im->sizeX;
+    GR->sizeY = im->sizeY;
 	ulong size = GR->sizeX * GR->sizeY ;
+	GR->n=size;
+	assert(GR->n > 0 );
 	/*
 	GR.liste = malloc(sizeof(noued) * im->sizeX * im->sizeY );
 	*/
@@ -19,7 +26,8 @@ int  Image_To_Graph( graph*GR, Image *im)
 	
 	for (ulong i = 0; i < GR->n ; i++)
 	{		j = i*3;
-			//GR->liste[i].adj = malloc(sizeof(ulong) * 4 );
+			GR->liste[i].adj = malloc(sizeof(ulong) * 4 );
+			assert(GR->liste[i].adj);
 			if(i < im->sizeX)
 					{				
 						GR->liste[i].n 	 		 = 0;
@@ -85,7 +93,7 @@ int  Image_To_Graph( graph*GR, Image *im)
 		
 	}
 	printf("sortie\n");
-	return 1;
+	return GR;
 }
 
 void print_Gr(graph *GR)
@@ -144,10 +152,7 @@ int Graph_To_Image(graph* gr,Image *im)
 }
 
 int Graph_To_Image2(graph *gr,Image *im)
-{	
-	
-	
-
+{
 	/*im->data = malloc((size_t)gr.n*3 * sizeof(GLubyte));
 	if(!im->data)
 	{	
@@ -156,7 +161,7 @@ int Graph_To_Image2(graph *gr,Image *im)
 	}*/
 	//print_Gr(gr);
 	for (ulong i = 0; i < gr->n; ++i)
-	{	if(gr->liste[i].n<3)
+	{	if(gr->liste[i].n>0)
 		{
 			im->data[i*3]   =gr->liste[i].R;
 			im->data[i*3+1] =gr->liste[i].G;
@@ -164,9 +169,9 @@ int Graph_To_Image2(graph *gr,Image *im)
 		}
 		else
 		{
-			im->data[i*3]  = 0;
+			im->data[i*3]  = 100;
 			im->data[i*3+1]= 0;
-			im->data[i*3+2]= 0;
+			im->data[i*3+2]= 100;
 		}
 	}
 
@@ -207,49 +212,71 @@ int Graph_To_Image3(graph* gr,Image *im)
 //les passes en parametres
 // elle contiendra la liste des graph convexes
 // on sauvegardmae a chaque
-List*  compos_connex(graph *gr)
-{   List *res;//resultat
-    Listgr *visite; // tout ceux visite
-    Listgr *courant;//le graph courant
-    visite =init_Lgr( gr->liste);
-    courant =init_Lgr( gr->liste);
-    assert(visite);
-    assert(courant);
-    assert(res);
-    add_Lgr(visite, gr->liste);
-    add_Lgr(courant, gr->liste);
-    for (int j = 0; j<gr->liste[0].n ; j++)
-        recherche_connex(gr, gr->liste[gr->liste[0].adj[j]], visite, courant);
-   res= init_L(courant);
-    assert(res);
-    //  init_Lgr(courant,gr)
-    for(ulong i  = 1 ;i < gr->n ; i++ )
-    {	courant =realloc(courant ,sizeof(Listgr));
-        assert(courant);
-        courant->data = gr->liste+i;
-        courant->next = NULL;
-        add_Lgr(visite, gr->liste+i);
-        for (int j = 0; j<gr->liste[i].n ; j++)
-            recherche_connex(gr,gr->liste[gr->liste[i].adj[j]],visite,courant);
-        add_L(res,courant);
+vectUl  compos_connex(graph *gr)
+{
+    vectUl visite;
+    visite.n = gr->n;
+    visite.data = malloc(sizeof(int)*gr->n);
+    assert(visite.data);
+    memset(visite.data,0,gr->n*4);
+   // visite.data = {0};
+    ulong cpt = 1;
+    for (ulong i = 0; i < gr->n ; ++i) {
+        if(visite.data[i]==0)
+        {
+            visite.data[i]=cpt;
+            for (int j = 0; j <gr->liste[i].n ; ++j) {
+                recherche_connex(gr,visite,gr->liste[i].adj[j],cpt);
+            }
+            cpt++;
+        }
 
     }
-    free_Lgr(courant);
-    free_Lgr(visite);
-    return res;
+    printf("%ld\n",cpt);
+    return  visite;
 }
 //cette fonction
-int  recherche_connex(graph *gr, noued data, Listgr*visite,Listgr *courant)
+int  recherche_connex(graph *gr, vectUl visite,ulong index,int cpt)
 {
-    for(int i=0; i<data.n; i++)
-       {    if(!find_Lgr(visite, gr->liste+data.adj[i]))
-           {
-                add_Lgr(courant ,gr->liste+data.adj[i]);
-                add_Lgr(visite,gr->liste+data.adj[i]);
-                recherche_connex(gr,gr->liste[data.adj[i]],visite,courant);
-            }
-            else
-                break;
-       }
+    if(visite.data[index]==0)
+    {
+        visite.data[index] = cpt;
+        for(int i = 0;i<gr->liste[index].n;i++)
+            recherche_connex(gr,visite,gr->liste[index].adj[i],cpt);
+    }
+
+
     return 1;
+}
+/*
+ * cette fonction va me permetre d'obenir un graph sans les voisin a 4 coleurs
+ * */
+vectUl Delete_Four(graph*gr, vectUl visite)
+{   printf("cette fonction est elle bien teste;\n");
+    ulong cpt = 0;
+    vectUl tmp;
+    for (ulong i = 0; i <gr->n ; ++i) {
+        if(gr->liste[i].n<4)
+            cpt++;
+    }
+    printf("%ld\n",cpt);
+    tmp.n=cpt;
+    tmp.data = malloc(sizeof(int)*cpt);
+    assert(tmp.data);
+    printf("on a gagne %f =%ld / %ld ",(float)cpt/gr->n,cpt,gr->n);
+    cpt=0;
+    for (ulong i = 0; i <gr->n ; ++i) {
+        if(gr->liste[i].n<4)
+         {   tmp.data[cpt] = visite.data[i];
+             cpt++;
+         }
+    }
+    return tmp;
+}
+
+void print(vectUl tab)
+{
+    for (ulong i = 0; i < tab.n; ++i) {
+        printf("%d :",tab.data[i]);
+    }
 }

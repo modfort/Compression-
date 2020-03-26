@@ -26,23 +26,31 @@ int find_Lgr(Listgr*tete,noued *data)
     return 0;
 }
 
-void add_Lgr(Listgr *tete,noued *data)
-{   if(!tete)
+
+Listgr* add_Lgr(Listgr *tete,noued *data)
+{
+    if(!tete)
     {
         fprintf(stderr,"%s\n","erreur d'allocation");
-        return;
+        return NULL;
     }
+
     Listgr *tmp = tete;
+
     while(tmp->next)
     {
         tmp = tmp->next;
     }
+
     Listgr * suiv;
     suiv = malloc(sizeof(Listgr));
     assert(suiv);
     suiv->data = data;
     tmp->next = suiv;
+    return tete;
 }
+
+
 void free_Lgr(Listgr *tete)
 {
     if(!tete)
@@ -64,11 +72,12 @@ List* init_L(Listgr *data)
     return tete;
 }
 
-void add_L(List *tete,Listgr *data)
+List* add_L(List *tete,Listgr *data)
 {   if(!tete)
     {
         fprintf(stderr,"%s\n","erreur d'allocation");
-        return;
+        exit(0);
+        return NULL;
     }
 
     List* tmp = tete;
@@ -80,6 +89,7 @@ void add_L(List *tete,Listgr *data)
     suiv = malloc(sizeof(List));
     suiv->data = data;
     tmp->next = suiv;
+    return tete;
 }
 
 void free_L(List *tete)

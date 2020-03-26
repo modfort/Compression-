@@ -4,7 +4,8 @@
 
 Image *image;//ceci est notre image de base
 graph *GR;// ceci est notre graphe avec son million de noued
-List * res;// ceci est notres liste de graph convexe.
+vectUl res;// ceci est notres liste de graph convexe.
+char s[100] ;//copie pour recharger l'image
 #define ESCAPE 27
 
 void Keyboard(unsigned char key, int x, int y)  {
@@ -30,31 +31,31 @@ void Mouse(int button, int state, int x, int y) {
   glutPostRedisplay();
 }
 
-int Init(char *s) {
+int Init(char *sa) {
 
   image = malloc(sizeof(Image));
   assert(image);
-  GR = malloc(sizeof(graph)  );
-  assert(GR);
+
   if (image == NULL) {
     fprintf(stderr, "Out of memory\n");
     return(-1);
   }
-  if(GR == NULL)
-  {
-    fprintf(stderr, "%s\n","Out of memory graph\n " );
-    exit(0);
-  }
-  if(GR->n<=0)
-  {
-    fprintf(stderr, "%s\n","erreur  d'allocation tableau" );
-    exit(0);
-  }
-  if (ImageLoad_PPM(s, image, GR)==-1) 
+
+  if (ImageLoad_PPM(s, image)==-1)
 	return(-1);
   printf("tailles %d %d\n",(int) image->sizeX, (int) image->sizeY);
-
-  glClearColor(0.0, 0.0, 0.0, 0.0);
+    GR=Image_To_Graph( image );
+    if(GR == NULL)
+    {
+        fprintf(stderr, "%s\n","Out of memory graph\n " );
+        exit(0);
+    }
+    if(GR->n<=0)
+    {
+        fprintf(stderr, "%s\n","erreur  d'allocation tableau" );
+        exit(0);
+    }
+    glClearColor(0.0, 0.0, 0.0, 0.0);
   glShadeModel(GL_FLAT);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glutReshapeWindow(image->sizeX, image->sizeY);
@@ -105,34 +106,32 @@ void menuFunc(int item) {
     exit(0);
     break;
   case 1:
-  case 2:
-     Image_To_Graph( GR, image );
-     print_Gr(GR);
-     Graph_To_Image3(GR,image);
+
+      // Graph_To_Image( GR, image);
+
+          Graph_To_Image(GR,image);
+          printf("reussi\n");
+          res= compos_connex(GR);
+         res= Delete_Four(GR,res);
+        //    print(res);
+          break;
+
+      case 2:
+
+     Graph_To_Image2(GR,image);
      
      printf("reussi\n");
    
     break;
   case 3:
-    
-     Image_To_Graph(GR, image );
-     print_Gr(GR);
-     Graph_To_Image2(GR,image);
-     
+
+     Graph_To_Image3(GR,image);
      printf("reussi\n");
      
     break;
-
-  case 6:
-     
-     // Graph_To_Image( GR, image);
-   Image_To_Graph(GR, image );
-   print_Gr(GR);
-   Graph_To_Image(GR,image);
-   printf("reussi\n");
-   res= compos_connex(GR);
-
-    break;
+      case 4:
+          Init("de");
+          break;
 
   default:
     break;
@@ -145,7 +144,7 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Usage : palette nom_de_fichier\n");
     exit(0);
   }
-
+  strcpy(s,argv[1]);
   glutInit(&argc, argv); 
   glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
   glutInitWindowSize(640,480);  
@@ -156,9 +155,10 @@ int main(int argc, char **argv) {
 
   glutCreateMenu(menuFunc);
   glutAddMenuEntry("Quit", 0);
-  glutAddMenuEntry("image3", 2);
-  glutAddMenuEntry("image2", 3);
-  glutAddMenuEntry("image", 6);
+    glutAddMenuEntry("image", 1);
+    glutAddMenuEntry("image2", 2);
+   glutAddMenuEntry("image3", 3);
+    glutAddMenuEntry("reload", 4);
   glutAttachMenu(GLUT_LEFT_BUTTON);
   glutDisplayFunc(Display);  
   glutReshapeFunc(Reshape);

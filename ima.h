@@ -6,7 +6,7 @@
 #include <GL/gl.h>	
 #include <unistd.h>     
 #include <math.h>
-
+#include<string.h>
 typedef struct noued noued;
 // cette structure represente un arret du graphe il contient sa position x
 // sa couleur au format rgb
@@ -24,6 +24,10 @@ typedef struct Graph{
     noued *         liste ;
 }graph;
 typedef unsigned long ulong;
+typedef struct vectUl
+{   ulong n;
+    int *data;
+}vectUl;
 typedef struct Listgr Listgr;
 struct Listgr{
 	noued *data ;
@@ -44,7 +48,7 @@ struct Image {
 typedef struct Image Image;
 typedef unsigned short utab [3][3][3];
 
-int ImageLoad_PPM(char *filename, Image *image, graph*);
+int ImageLoad_PPM(char *filename, Image *image);
 void imagesave_PPM(char *filename, Image *image);
 /*
 void floattoint3(float, float, float, int *, int *, int *);

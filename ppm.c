@@ -5,7 +5,7 @@
 #define CREATOR "SM"
 #define RGB_COMPONENT_COLOR 255
 
-int ImageLoad_PPM(char *filename, Image *img,graph * gr)
+int ImageLoad_PPM(char *filename, Image *img)
 {
   char d, buff[16];
          FILE *fp;
@@ -61,17 +61,7 @@ int ImageLoad_PPM(char *filename, Image *img,graph * gr)
 	size = img->sizeX * img->sizeY * 3;
 	printf("Size image %lu %lu => %d\n", img->sizeX, img->sizeY, size);
     
-    printf("graoh alloue\n");
-    gr->liste= malloc(sizeof(noued) * img->sizeX * img->sizeY );
-    gr->sizeX = img->sizeX;
-    gr->sizeY = img->sizeY;
-    gr->n     =  img->sizeX * img->sizeY ;
-    printf("size du graph :%ld\n",gr->n );
-    for (ulong i = 0; i < gr->n; ++i)
-    {
-        gr->liste[i].adj = malloc(sizeof(ulong) * 4 );
 
-    }
 	img->data = (GLubyte * ) malloc ((size_t) size * sizeof (GLubyte));
     assert(img->data);
 									
