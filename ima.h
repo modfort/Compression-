@@ -12,20 +12,21 @@ typedef struct noued noued;
 // sa couleur au format rgb
 // le nombre d'element
 struct noued{
-	ulong x;
+	uint x;
 	GLubyte R , G ,B;
 	int n;
 	ulong  *adj;
 };
 
 typedef struct Graph{
-	ulong sizeX , sizeY   ;
-    ulong 			n     ;
+	uint sizeX , sizeY   ;
+    uint 			n     ;
     noued *         liste ;
 }graph;
 typedef unsigned long ulong;
+typedef unsigned int uint;
 typedef struct vectUl
-{   ulong n;
+{   uint n;
     int *data;
 }vectUl;
 typedef struct Listgr Listgr;

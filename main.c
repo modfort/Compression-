@@ -1,5 +1,6 @@
-#ifndef GRAPH_H
-#include "graph.h"
+
+#ifndef CONNEX_H
+#include "connex.h"
 #endif
 
 Image *image;//ceci est notre image de base
@@ -112,8 +113,9 @@ void menuFunc(int item) {
           Graph_To_Image(GR,image);
           printf("reussi\n");
           res= compos_connex(GR);
-         res= Delete_Four(GR,res);
-        //    print(res);
+          res= Delete_Four(GR,res);
+
+         // print(res);
           break;
 
       case 2:
@@ -132,9 +134,14 @@ void menuFunc(int item) {
       case 4:
           Init("de");
           break;
+      case 5:
+          Compress(GR,res , image ) ;
+      break;
+      case 6 :
+         image =   UNcompress1( );
 
-  default:
-    break;
+          break;
+
   }
 }
 
@@ -159,6 +166,8 @@ int main(int argc, char **argv) {
     glutAddMenuEntry("image2", 2);
    glutAddMenuEntry("image3", 3);
     glutAddMenuEntry("reload", 4);
+    glutAddMenuEntry("Compress", 5);
+    glutAddMenuEntry("Uncompress", 6);
   glutAttachMenu(GLUT_LEFT_BUTTON);
   glutDisplayFunc(Display);  
   glutReshapeFunc(Reshape);
